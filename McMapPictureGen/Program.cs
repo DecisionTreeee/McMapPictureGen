@@ -44,30 +44,6 @@ namespace McMapPictureGen
             }
 
             File.WriteAllText($"./{fileName}.mcfunction", sb.ToString());
-            
-            /*
-            List<string> list = new List<string>();
-            string[] cmds = File.ReadAllLines("rice.mcfunction");
-            for (int i = 0; i < cmds.Length; i++)
-            {
-                bool has = false;
-                string block = cmds[i].Split(" ")[4];
-                for (int j = 0; j < list.Count; j++)
-                {
-                    if (list.Any(x => x == block))
-                    {
-                        has = true;
-                    }
-                }
-                if (!has)
-                {
-                    list.Add(block);
-                }
-            }
-            
-
-            Console.WriteLine(list.Count);
-            */
         }
     }
 }
