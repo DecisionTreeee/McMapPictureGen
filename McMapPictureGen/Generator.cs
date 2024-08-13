@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Drawing2D;
 
 namespace McMapPictureGen
@@ -8,19 +7,19 @@ namespace McMapPictureGen
     {
         public static Bitmap BmpScale(Bitmap bmp, float percent)
         {
-                if (bmp.Width == bmp.Width * percent / 100f && bmp.Height == bmp.Height * percent / 100f)
-                {
-                    return bmp;
-                }
+            if (bmp.Width == bmp.Width * percent / 100f && bmp.Height == bmp.Height * percent / 100f)
+            {
+                return bmp;
+            }
 
-                Bitmap scaledBitmap = new Bitmap((int)(bmp.Width * percent / 100f), (int)(bmp.Height * percent / 100f));
-                using (Graphics g = Graphics.FromImage(scaledBitmap))
-                {
-                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                    g.DrawImage(bmp, 0, 0, (int)(bmp.Width * percent / 100f), (int)(bmp.Height * percent / 100f));
-                }
+            Bitmap scaledBitmap = new Bitmap((int)(bmp.Width * percent / 100f), (int)(bmp.Height * percent / 100f));
+            using (Graphics g = Graphics.FromImage(scaledBitmap))
+            {
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                g.DrawImage(bmp, 0, 0, (int)(bmp.Width * percent / 100f), (int)(bmp.Height * percent / 100f));
+            }
 
-                return scaledBitmap;
+            return scaledBitmap;
         }
 
         public static float ColorDistance(Color c1, Color c2)
@@ -48,23 +47,31 @@ namespace McMapPictureGen
         public static Bitmap Generate(Bitmap bmp, Dictionary<Color, int[]> colorShadowedDic)
         {
             Bitmap output = new Bitmap(bmp.Width, bmp.Height);
-            for (int w = 0; w < bmp.Width; w++)
+            PointBitmap pointOutput = new PointBitmap(output);
+            pointOutput.LockBits();
+
+            for (int w = 0; w < output.Width; w++)
             {
-                for (int h = 0; h < bmp.Height; h++)
+                for (int h = 0; h < output.Height; h++)
                 {
-                    output.SetPixel(w, h, FindColor(bmp.GetPixel(w, h), colorShadowedDic));
+                    pointOutput.SetPixel(w, h, FindColor(pointOutput.GetPixel(w, h), colorShadowedDic));
                 }
             }
+
+            pointOutput.UnlockBits();
 
             return output;
         }
 
         public static List<string> Transform(Bitmap bmp, Dictionary<Color, int[]> colorShadowedDic)
         {
-            List<string> output = new List<string>(); 
+            List<string> output = new List<string>();
             int w = bmp.Width;
             int h = bmp.Height;
             int y = 20;
+
+            PointBitmap pointBmp = new PointBitmap(bmp);
+            pointBmp.LockBits();
 
             for (int _w = 0; _w < w; _w++)
             {
@@ -72,10 +79,11 @@ namespace McMapPictureGen
                 int _x = _w - w / 2;
 
                 output.Add($"tp @a {_x} {_y} {h - w / 2}");
+
                 for (int _h = 0; _h < h; _h++)
                 {
                     int _z = _h - w / 2;
-                    Color c = bmp.GetPixel(_w, _h);
+                    Color c = pointBmp.GetPixel(_w, _h);
                     int[] id = colorShadowedDic[c];
                     string block = BlockData.BlockDic[id[0].ToString()];
 
@@ -91,6 +99,8 @@ namespace McMapPictureGen
                     output.Add($"setblock {_x} {_y} {_z} {block}");
                 }
             }
+
+            pointBmp.UnlockBits();
 
             return output;
         }

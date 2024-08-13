@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using System.Drawing.Imaging;
 using System.Text;
 
 namespace McMapPictureGen
@@ -8,7 +7,7 @@ namespace McMapPictureGen
     {
         static void Main(string[] args)
         {
-            
+
             Console.WriteLine("文件路径");
             string path = Console.ReadLine();
             string fileName = Path.GetFileNameWithoutExtension(path);

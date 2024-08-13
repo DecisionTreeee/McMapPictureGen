@@ -69,7 +69,7 @@ namespace McMapPictureGen
             { "60", "minecraft:raw_iron_block" }
         };
 
-        public static Dictionary<string, Color> ColorDic = new Dictionary<string, Color>() 
+        public static Dictionary<string, Color> ColorDic = new Dictionary<string, Color>()
         {
             { "1", Color.FromArgb(127, 178, 56) },
             { "2", Color.FromArgb(247, 233, 163) },
