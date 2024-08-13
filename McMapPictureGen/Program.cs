@@ -34,7 +34,9 @@ namespace McMapPictureGen
             Bitmap compressed = Generator.BmpScale(source, compress);
 
             Bitmap outputBmp = Generator.Generate(compressed, colorShadowedDic);
-            List<string> outputFunc = Generator.Transform(outputBmp, colorShadowedDic);
+            List<string> outputFunc;
+            bool reach;
+            (outputFunc, reach) = Generator.Transform(outputBmp, colorShadowedDic);
 
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < outputFunc.Count; i++)
@@ -42,7 +44,13 @@ namespace McMapPictureGen
                 sb.Append(outputFunc[i].ToString() + "\n");
             }
 
+            if (reach)
+            {
+                Console.WriteLine("警告: 到达限低或限高");
+            }
+
             File.WriteAllText($"./{fileName}.mcfunction", sb.ToString());
+            Console.WriteLine($"文件保存在 {Path.GetFullPath($"./{fileName}.mcfunction")}");
         }
     }
 }

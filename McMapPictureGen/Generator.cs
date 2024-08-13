@@ -63,7 +63,7 @@ namespace McMapPictureGen
             return output;
         }
 
-        public static List<string> Transform(Bitmap bmp, Dictionary<Color, int[]> colorShadowedDic)
+        public static (List<string>, bool) Transform(Bitmap bmp, Dictionary<Color, int[]> colorShadowedDic)
         {
             List<string> output = new List<string>();
             int w = bmp.Width;
@@ -72,6 +72,8 @@ namespace McMapPictureGen
 
             PointBitmap pointBmp = new PointBitmap(bmp);
             pointBmp.LockBits();
+
+            bool reachHighLimit = false;
 
             for (int _w = 0; _w < w; _w++)
             {
@@ -96,13 +98,18 @@ namespace McMapPictureGen
                         _y += 1;
                     }
 
+                    if (_y > 255 || _y < 0)
+                    {
+                        reachHighLimit = true;
+                    }
+
                     output.Add($"setblock {_x} {_y} {_z} {block}");
                 }
             }
 
             pointBmp.UnlockBits();
 
-            return output;
+            return (output, reachHighLimit);
         }
     }
 }
