@@ -48,17 +48,21 @@ namespace McMapPictureGen
         {
             Bitmap output = new Bitmap(bmp.Width, bmp.Height);
             PointBitmap pointOutput = new PointBitmap(output);
+            PointBitmap pointBmp = new PointBitmap(bmp);
+
             pointOutput.LockBits();
+            pointBmp.LockBits();
 
             for (int w = 0; w < output.Width; w++)
             {
                 for (int h = 0; h < output.Height; h++)
                 {
-                    pointOutput.SetPixel(w, h, FindColor(pointOutput.GetPixel(w, h), colorShadowedDic));
+                    pointOutput.SetPixel(w, h, FindColor(pointBmp.GetPixel(w, h), colorShadowedDic));
                 }
             }
 
             pointOutput.UnlockBits();
+            pointBmp.UnlockBits();
 
             return output;
         }
