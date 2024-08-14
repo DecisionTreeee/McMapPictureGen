@@ -65,6 +65,7 @@ namespace McMapPictureGen
 
         public static (List<string>, bool) Transform(Bitmap bmp, Dictionary<Color, int[]> colorShadowedDic)
         {
+            List<Command> commands = new List<Command>();
             List<string> output = new List<string>();
             int w = bmp.Width;
             int h = bmp.Height;
@@ -73,14 +74,12 @@ namespace McMapPictureGen
             PointBitmap pointBmp = new PointBitmap(bmp);
             pointBmp.LockBits();
 
-            bool reachHighLimit = false;
-
             for (int _w = 0; _w < w; _w++)
             {
                 int _y = y;
                 int _x = _w - w / 2;
 
-                output.Add($"tp @a {_x} {_y} {h - w / 2}");
+                //output.Add($"tp @a {_x} {_y} {h - w / 2}");
 
                 for (int _h = 0; _h < h; _h++)
                 {
@@ -98,16 +97,27 @@ namespace McMapPictureGen
                         _y += 1;
                     }
 
-                    if (_y > 255 || _y < 0)
-                    {
-                        reachHighLimit = true;
-                    }
-
-                    output.Add($"setblock {_x} {_y} {_z} {block}");
+                    commands.Add(new Command(_x, _y, _z, block));
                 }
             }
 
             pointBmp.UnlockBits();
+
+            // 自动处理高度
+            bool reachHighLimit = false;
+
+            int _y_max = commands.Max(x => x.Y);
+            for (int i = 0; i < commands.Count; i++)
+            {
+                commands[i].Y += 255 - _y_max;
+
+                if (commands[i].Y < 0)
+                {
+                    reachHighLimit = true;
+                }
+
+                output.Add(commands[i].MergeCommand());
+            }
 
             return (output, reachHighLimit);
         }
