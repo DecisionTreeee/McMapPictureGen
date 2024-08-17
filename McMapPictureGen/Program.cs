@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using Newtonsoft.Json;
+using System.ComponentModel;
+using System.Drawing;
 using System.Text;
 
 namespace McMapPictureGen
@@ -7,17 +9,15 @@ namespace McMapPictureGen
     {
         static void Main(string[] args)
         {
-
             Console.WriteLine("文件路径");
             string path = Console.ReadLine();
-            string fileName = Path.GetFileNameWithoutExtension(path);
             Console.WriteLine("压缩程度(百分比)");
             float compress = float.Parse(Console.ReadLine());
 
             Dictionary<Color, int[]> colorShadowedDic = new Dictionary<Color, int[]>();
             for (int i = 1; i <= 60; i++)
             {
-                if (i == 12)
+                if (i == 12) // 排除流动水
                 {
                     continue;
                 }
@@ -49,8 +49,28 @@ namespace McMapPictureGen
                 Console.WriteLine("警告: 到达限低或限高");
             }
 
-            File.WriteAllText($"./{fileName}.mcfunction", sb.ToString());
-            Console.WriteLine($"文件保存在 {Path.GetFullPath($"./{fileName}.mcfunction")}");
+            Console.WriteLine("是否自动生成数据包? (y/n)");
+            string yn = Console.ReadLine();
+            if (yn == "y")
+            {
+                Console.WriteLine("输入游戏版本(例如1.16.5)");
+                int gameVersion = int.Parse(Console.ReadLine().Replace(".", ""));
+                if (gameVersion < 1000)
+                {
+                    gameVersion *= 10;
+                }
+                int packVersion = PackGenerator.FindPackVersion(gameVersion);
+
+                PackGenerator.GenerateDir(packVersion, outputFunc);
+                PackGenerator.ZipPack();
+
+                Console.WriteLine($"数据包保存在 {Path.GetFullPath($"./pic.zip")}");
+            }
+            if (yn == "n")
+            {
+                File.WriteAllText($"draw.mcfunction", sb.ToString());
+                Console.WriteLine($"文件保存在 {Path.GetFullPath($"./draw.mcfunction")}");
+            }
         }
     }
 }

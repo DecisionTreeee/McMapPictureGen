@@ -12,18 +12,32 @@ namespace McMapPictureGen
         public int Y;
         public int Z;
         public string BlockId;
+        public CommandType Type;
 
-        public Command(int x, int y, int z, string blockId)
+        public Command(int x, int y, int z, string blockId, CommandType type = CommandType.Setblock)
         {
             X = x;
             Y = y;
             Z = z;
             BlockId = blockId;
+            Type = type;
         }
 
         public string MergeCommand()
         {
-            return $"setblock {X} {Y} {Z} {BlockId}";
+            if (Type == CommandType.Setblock)
+            {
+                return $"setblock {X} {Y} {Z} {BlockId}";
+            }
+            else
+            {
+                return $"tp @a {X} {Y} {Z}";
+            }
         }
+    }
+
+    public enum CommandType
+    {
+        Setblock, Tp
     }
 }

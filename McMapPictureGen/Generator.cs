@@ -83,7 +83,7 @@ namespace McMapPictureGen
                 int _y = y;
                 int _x = _w - w / 2;
 
-                //output.Add($"tp @a {_x} {_y} {h - w / 2}");
+                commands.Add(new Command(_x, _y, 0, "EMPTY_BLOCK", CommandType.Tp));
 
                 for (int _h = 0; _h < h; _h++)
                 {
