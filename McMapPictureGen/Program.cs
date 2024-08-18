@@ -71,6 +71,8 @@ namespace McMapPictureGen
                 File.WriteAllText($"draw.mcfunction", sb.ToString());
                 Console.WriteLine($"文件保存在 {Path.GetFullPath($"./draw.mcfunction")}");
             }
+
+            Console.ReadLine();
         }
     }
 }
